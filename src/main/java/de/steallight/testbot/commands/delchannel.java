@@ -1,61 +1,50 @@
 package de.steallight.testbot.commands;
 
-import de.azraanimating.maddoxengine.handling.command.Command;
-import de.azraanimating.maddoxengine.handling.command.CommandEvent;
-import de.azraanimating.maddoxengine.handling.objects.MaddoxGuild;
-import de.azraanimating.maddoxengine.handling.objects.MaddoxMember;
+import de.steallight.testbot.main.Bot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.TextChannel;
 
-import java.awt.*;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class delchannel extends Command {
+public class delchannel extends ListenerAdapter {
 
     EmbedBuilder eb = new EmbedBuilder();
 
-    public delchannel(){
-
-        this.setName("delchannel");
-
-    }
-
     @Override
-    protected void execute(CommandEvent event, MaddoxMember sender, MaddoxGuild server) {
-        if(sender.hasPermission(Permission.MANAGE_CHANNEL)) {
+    public void onMessageReceived(MessageReceivedEvent e) {
+        if (e.getMessage().getContentRaw().equals(Bot.PREFIX+"delchannel")) {
+            if (e.getMember().hasPermission(Permission.MANAGE_CHANNEL)) {
+                final List<GuildChannel> channels = e.getMessage().getMentions().getChannels();
+                final TextChannel tc = (TextChannel) e.getMessage().getMentions().getChannels().get(0);
 
-            final List<TextChannel> channels = event.getMessage().getMentionedChannels();
-            final TextChannel tc = event.getMessage().getMentionedChannels().get(0);
-            if (!channels.isEmpty()) {
-                if(event.getChannel() == tc) {
-
-
-
-                    tc.delete().queue();
-
-
+                if (!channels.isEmpty()){
+                    if (e.getChannel() == tc) {
+                        deleteChannel(e, tc.getId());
+                    }else {
+                        e.getChannel().sendMessage("Channel wurde gelöscht").queue(message -> message.delete().queueAfter(3,TimeUnit.SECONDS));
+                        deleteChannel(e,tc.getId());
+                    }
                 }else {
-                    eb.setTitle("Channel wurde gelöscht!");
-                    eb.setColor(Color.GREEN);
-
-                    event.deleteEventMessage();
-                    event.getChannel().sendMessage(eb.build()).complete().delete().queueAfter(5, TimeUnit.SECONDS);
-                    tc.delete().queue();
+                    e.getChannel().sendMessage("Geb einen Channel an!").queue(message -> message.delete().queueAfter(3,TimeUnit.SECONDS));
                 }
             }else {
-                eb.setTitle("Bitte gebe einen Channel an");
-                eb.setColor(Color.RED);
-                event.getChannel().sendMessage(eb.build()).complete().delete().queueAfter(5,TimeUnit.SECONDS);
-                event.deleteEventMessage();
-
+                e.getChannel().sendMessage("Keine Rechte!").queue(message -> message.delete().queueAfter(3,TimeUnit.SECONDS));
             }
-        }else{
-            eb.setTitle("Dafür hast du keine Rechte!");
-            eb.setColor(Color.RED);
-            event.getChannel().sendMessage(eb.build()).complete().delete().queueAfter(5,TimeUnit.SECONDS);
-            event.deleteEventMessage();
         }
     }
+
+    protected void deleteChannel(MessageReceivedEvent e, String channelID){
+        TextChannel guildChannel = e.getGuild().getTextChannelById(channelID);
+        if (guildChannel != null){
+            guildChannel.delete().queue();
+        }
+    }
+
+
 }

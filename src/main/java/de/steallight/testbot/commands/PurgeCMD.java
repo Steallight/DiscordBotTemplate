@@ -1,35 +1,23 @@
 package de.steallight.testbot.commands;
 
-import de.azraanimating.maddoxengine.handling.command.Command;
-import de.azraanimating.maddoxengine.handling.command.CommandEvent;
-import de.azraanimating.maddoxengine.handling.objects.MaddoxGuild;
-import de.azraanimating.maddoxengine.handling.objects.MaddoxMember;
+import de.steallight.testbot.main.Bot;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-public class PurgeCMD extends Command {
+public class PurgeCMD extends ListenerAdapter {
 
-    public PurgeCMD(){
-
-        this.setName("purge");
-
-    }
 
     @Override
-    protected void execute(CommandEvent event, MaddoxMember sender, MaddoxGuild server) {
-
-        if(sender.hasPermission(Permission.MANAGE_CHANNEL)){
-            if(event.getArguments().size() > 0){
-
+    public void onMessageReceived(MessageReceivedEvent e) {
+        if (e.getMessage().getContentRaw().equals(Bot.PREFIX + "purge")) {
+            if (e.getMember().hasPermission(Permission.MANAGE_CHANNEL)) {
+                try {
+                    Integer position = e.getChannel().asTextChannel().getPosition();
+                    e.getChannel().asTextChannel().createCopy().setPosition(position).queue();
+                    e.getChannel().delete().queue();
+                }catch (NullPointerException ex){ex.printStackTrace();}
             }
-try {
-
-Integer position = event.getChannel().getPosition();
-    event.getChannel().createCopy().setPosition(position).queue();
-    event.getChannel().delete().queue();
-}catch (NullPointerException e){
-    e.printStackTrace();
-}
         }
-
     }
 }

@@ -1,62 +1,58 @@
 package de.steallight.testbot.commands;
 
-import de.azraanimating.maddoxengine.handling.command.Command;
-import de.azraanimating.maddoxengine.handling.command.CommandEvent;
-import de.azraanimating.maddoxengine.handling.objects.MaddoxGuild;
-import de.azraanimating.maddoxengine.handling.objects.MaddoxMember;
+import de.steallight.testbot.main.Bot;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.TextChannel;
+
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.awt.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class announceCMD extends Command {
-
-    public announceCMD(){
-        this.setName("announce");
-    }
+public class announceCMD extends ListenerAdapter {
 
     @Override
-    protected void execute(CommandEvent event, MaddoxMember sender, MaddoxGuild server) {
+    public void onMessageReceived(MessageReceivedEvent e) {
+        if (e.getMessage().getContentStripped().equals(Bot.PREFIX+"announce")){
+            final String[] args = e.getMessage().getContentRaw().split(" ");
+            final List<GuildChannel> channels = e.getMessage().getMentions().getChannels();
 
+            if (e.getMember().hasPermission(Permission.MESSAGE_MANAGE)){
+                if (!channels.isEmpty()){
+                    final TextChannel tc = (TextChannel) e.getMessage().getMentions().getChannels().get(0);
+                    final String message = args[2];
 
-        final String[] args = event.getMessage().getContentDisplay().split(" ");
-        final List<TextChannel> channels = event.getMessage().getMentionedChannels();
+                    try {
+                        StringBuilder builder = new StringBuilder();
 
-        if (sender.hasPermission(Permission.MESSAGE_MANAGE)) {
+                        for (int i = 2; i< args.length; i++){
+                            builder.append(args[i]).append(" ");
+                        }
 
-            if (!channels.isEmpty()) {
-                final TextChannel tc = event.getMessage().getMentionedChannels().get(0);
-                final String message = args[2];
+                        String finishedString = builder.toString().trim();
+                        e.getMessage().delete().queue();
 
-                try {
-                    StringBuilder builder = new StringBuilder();
+                        EmbedBuilder replyEmbed = new EmbedBuilder();
+                        EmbedBuilder announceEmbed = new EmbedBuilder();
 
-                    for (int i = 2; i < args.length; i++) {
-                        builder.append(args[i]).append(" ");
+                        replyEmbed
+                                .setTitle("Die Information wurde gepostet")
+                                .setColor(Color.GREEN);
+
+                        announceEmbed
+                                .setDescription(finishedString)
+                                .setFooter("posted by " +e.getMember().getEffectiveName());
+
+                        e.getChannel().sendMessageEmbeds(replyEmbed.build()).queue(a -> a.delete().queueAfter(3, TimeUnit.SECONDS));
+                        tc.sendMessageEmbeds(announceEmbed.build()).queue();
+                    }catch (final NumberFormatException exception){
+                        exception.printStackTrace();
                     }
-
-                    String finishedString = builder.toString().trim();
-                    event.deleteEventMessage();
-                    EmbedBuilder embedBuilder = new EmbedBuilder();
-
-                    embedBuilder.setTitle("Die Information wurde geposted!");
-                    embedBuilder.setColor(Color.green);
-
-                    EmbedBuilder eb = new EmbedBuilder();
-                    eb.setDescription(finishedString);
-                    eb.setFooter("posted by " + event.getSender().getUser().getName());
-
-                    event.getChannel().sendMessage(embedBuilder.build()).complete().delete().queueAfter(5, TimeUnit.SECONDS);
-                    tc.sendMessage(eb.build()).complete();
-
-
-                } catch (final NumberFormatException e) {
-                    e.printStackTrace();
                 }
-
             }
         }
     }

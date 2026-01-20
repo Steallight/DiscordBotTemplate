@@ -9,12 +9,11 @@ import java.util.TimerTask;
 
 public class ActivityManager {
     private Runnable switcherThread;
-    private final ShardManager shardManager;
     private final Bot bot;
 
     public ActivityManager(Bot bot) {
         this.bot = bot;
-        this.shardManager = bot.getShardMan();
+
     }
 
     public void loadPresence() {
@@ -28,15 +27,15 @@ public class ActivityManager {
                 public void run() {
                     switch (this.currentRoutinePosition) {
                         case 0:
-                            Bot.shardMan.setPresence(OnlineStatus.DO_NOT_DISTURB, Activity.playing("Rocket League"));
+                            Bot.jda.getPresence().setPresence(OnlineStatus.DO_NOT_DISTURB, Activity.playing("Rocket League"));
                             this.currentRoutinePosition++;
                             break;
                         case 1:
-                            Bot.shardMan.setPresence(OnlineStatus.DO_NOT_DISTURB, Activity.watching("Chats an"));
+                            Bot.jda.getPresence().setPresence(OnlineStatus.DO_NOT_DISTURB, Activity.watching("Chats an"));
                             this.currentRoutinePosition++;
                             break;
                         case 2:
-                            Bot.shardMan.setPresence(OnlineStatus.DO_NOT_DISTURB, Activity.listening("auf -> !"));
+                            Bot.jda.getPresence().setPresence(OnlineStatus.DO_NOT_DISTURB, Activity.listening("auf -> !"));
                             this.currentRoutinePosition = 0;
                             break;
 

@@ -1,29 +1,19 @@
 package de.steallight.testbot.commands;
 
-import de.azraanimating.maddoxengine.handling.command.Command;
-import de.azraanimating.maddoxengine.handling.command.CommandEvent;
-import de.azraanimating.maddoxengine.handling.objects.MaddoxGuild;
-import de.azraanimating.maddoxengine.handling.objects.MaddoxMember;
+import de.steallight.testbot.main.Bot;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.util.concurrent.TimeUnit;
 
-public class Hi extends Command {
+public class Hi extends ListenerAdapter {
 
-    public Hi() {
-
-        this.setName("hi");
-
-
-    }
 
     @Override
-    protected void execute(final CommandEvent event, final MaddoxMember sender, final MaddoxGuild server) {
-
-
-
-        event.getChannel().sendMessage("Hi " + sender.getAsMention() + " ^^").complete().delete().queueAfter(5, TimeUnit.SECONDS);
-        event.deleteEventMessage();
-
+    public void onMessageReceived(MessageReceivedEvent e) {
+        if (e.getMessage().getContentRaw().equals(Bot.PREFIX+"hi")){
+           e.getChannel().sendMessage("Hi " +e.getMember().getAsMention() + " ^^").queue(message -> message.delete().queueAfter(3,TimeUnit.SECONDS));
+        }
     }
 
 }

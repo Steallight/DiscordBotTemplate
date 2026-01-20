@@ -1,29 +1,27 @@
 package de.steallight.testbot.commands;
 
-import de.azraanimating.maddoxengine.handling.command.Command;
-import de.azraanimating.maddoxengine.handling.command.CommandEvent;
-import de.azraanimating.maddoxengine.handling.objects.MaddoxGuild;
-import de.azraanimating.maddoxengine.handling.objects.MaddoxMember;
+import de.steallight.testbot.main.Bot;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.awt.*;
 
-public class devCMD extends Command {
+public class devCMD extends ListenerAdapter {
 
-    public devCMD(){this.setName("dev");}
+
 
     @Override
-    protected void execute(CommandEvent event, MaddoxMember sender, MaddoxGuild server) {
+    public void onMessageReceived(MessageReceivedEvent e) {
+        if (e.getMessage().equals(Bot.PREFIX + "dev")) {
+            EmbedBuilder eb = new EmbedBuilder();
 
-        event.deleteEventMessage();
+            eb
+                    .setTitle("Der Bot wurde von " + e.getGuild().getMemberById("438200912599580675").getAsMention() + " programmiert")
+                    .setColor(Color.WHITE);
 
-
-        EmbedBuilder eb = new EmbedBuilder();
-
-        eb.setTitle("Der Bot wurde von " + server.getMemberById("438200912599580675").getAsMention() + " programmiert");
-        eb.setColor(Color.WHITE);
-
-            event.reply(eb.build());
-
+            e.getChannel().sendMessageEmbeds(eb.build()).queue();
+        }
     }
+
 }
