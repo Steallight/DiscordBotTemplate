@@ -8,12 +8,19 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.awt.*;
 
+/**
+ * Sendet ein Hilfe-Menü als Private-Message an den anfragenden User.
+ * Verwendung: !help
+ */
 public class Help extends ListenerAdapter {
 
 
     @Override
     public void onMessageReceived(MessageReceivedEvent e) {
         if (e.getMessage().getContentRaw().equals(Bot.PREFIX + "help")) {
+            // In Direct Messages ist getMember() null: schütze vor NullPointerException
+            if (e.getMember() == null) return;
+
             final EmbedBuilder eb = new EmbedBuilder();
             if (!e.getMember().hasPermission(Permission.ADMINISTRATOR)) {
                 eb.setTitle("----Hilfe Menü----");
@@ -55,4 +62,3 @@ public class Help extends ListenerAdapter {
         }
     }
 }
-

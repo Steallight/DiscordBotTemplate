@@ -2,14 +2,12 @@ package de.steallight.testbot.main;
 
 
 import de.steallight.testbot.commands.*;
-import de.steallight.testbot.listener.*;
+import de.steallight.testbot.listener.SupportListener;
+import de.steallight.testbot.listener.VoiceListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
 import javax.security.auth.login.LoginException;
@@ -20,7 +18,6 @@ public class Bot {
     public static String PREFIX = "!";
     public static JDA jda;
     public static Bot INSTANCE;
-    public static TextChannel tc;
 
 
     public Bot() throws LoginException, InterruptedException {
@@ -50,26 +47,30 @@ public class Bot {
         assert server != null;
 
 
-        ActivityManager activityManager = new ActivityManager(this);
+        ActivityManager activityManager = new ActivityManager();
         LiteSQL.connect();
         SQLManager.onCreate();
 
-        /*
-        builder.setActivity(Activity.playing("Work in Progress"));
-        builder.setStatus(OnlineStatus.DO_NOT_DISTURB);
-
-         */
 
         activityManager.loadPresence();
 
+        // intern: Registere Events und Commands
         this.addEvents();
         this.updateCommands(server);
 
 
     }
 
-    //Für Events
-    public void addEvents() {
+    public static Bot getINSTANCE() {
+        return INSTANCE;
+    }
+
+    /**
+     * Registriert Event-Listener und Command-Handler. Diese Methode ist privat
+     * um zu verhindern, dass sie in Unterklassen überschrieben wird — so vermeiden
+     * wir "this-escape"-Warnungen beim Aufruf aus dem Konstruktor.
+     */
+    private void addEvents() {
         jda.addEventListener(new announceCMD());
         jda.addEventListener(new Avatar());
         jda.addEventListener(new ClearCommand());
@@ -84,7 +85,7 @@ public class Bot {
     }
 
     //Für Slash Commands
-    public void updateCommands(Guild server) {
+    private void updateCommands(Guild server) {
         server.updateCommands()
                 .addCommands(
                         /*Commands.slash("set-ticket", "Setzte den TicketChannel")
@@ -93,10 +94,6 @@ public class Bot {
 
                          */
                 ).queue();
-    }
-
-    public static Bot getINSTANCE() {
-        return INSTANCE;
     }
 
 }

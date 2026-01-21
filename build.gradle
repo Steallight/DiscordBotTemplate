@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 
 }
 
@@ -15,10 +16,10 @@ repositories {
 }
 
 dependencies {
-    implementation("net.dv8tion:JDA:6.1.1") {
+    implementation("net.dv8tion:JDA:6.3.0") {
         exclude module: 'opus-java'
     }
-    implementation 'ch.qos.logback:logback-classic:1.5.13'
+    implementation 'ch.qos.logback:logback-classic:1.5.24'
     implementation group: 'com.github.philippheuer.events4j', name: 'events4j-handler-simple', version: '0.9.2'
     implementation group: 'org.xerial', name: 'sqlite-jdbc', version: '3.51.0.0'
 
@@ -26,14 +27,31 @@ dependencies {
 }
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
+    // Debugging: Ausgabe des Java-Compilers aktivieren, um zu sehen, welche Datei das Problem verursacht
+    options.compilerArgs += ['-Xlint:all', '-verbose']
 }
+
+// Metadata for the normal jar (kept minimal)
 jar {
-    setArchiveBaseName("TemplateBot")
-    from {
-        configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
-    }
     manifest {
-        attributes["Implimentation-Title"] = project.name
-        attributes["Main-Class"] = "de.steallight.testbot.main.TestBot"
+        attributes 'Implementation-Title': project.name, 'Implementation-Version': project.version
     }
+}
+
+// Shadow plugin configuration: erzeugt ein Fat-JAR unter build/libs
+shadowJar {
+    archiveBaseName.set('TemplateBot')
+    archiveClassifier.set('all')
+    // Merge service files and exclude duplicate entries that cause failures
+    mergeServiceFiles()
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    manifest {
+        attributes['Main-Class'] = 'de.steallight.testbot.main.TestBot'
+    }
+}
+
+// Optional: make the build task produce the shadow jar as well
+build {
+    dependsOn shadowJar
 }

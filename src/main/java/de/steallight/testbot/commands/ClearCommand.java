@@ -12,15 +12,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Befehl zum Entfernen einer Anzahl von Nachrichten aus dem aktuellen Channel.
+ * Verwendung: !clear <Anzahl>
+ * Der Aufrufer benötigt die Permission MESSAGE_MANAGE.
+ */
 public class ClearCommand extends ListenerAdapter {
 
 
+    /**
+     * Verarbeitet den Befehl, prüft Rechte und Anzahl-Argument und entfernt
+     * die angegebene Anzahl Nachrichten (sofern möglich).
+     *
+     * @param e Event mit Kontext zur Nachricht
+     */
     @Override
     public void onMessageReceived(MessageReceivedEvent e) {
         MessageChannel tc = e.getChannel().asTextChannel();
         String[] args = e.getMessage().getContentRaw().split(" ");
         EmbedBuilder eb = new EmbedBuilder();
-        if (e.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
+        if (e.getMember() != null && e.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
             if (args.length == 2) {
                 try {
                     int amount = Integer.parseInt(args[1]);
@@ -42,6 +53,14 @@ public class ClearCommand extends ListenerAdapter {
         }
     }
 
+    /**
+     * Hilfsmethode zum Sammeln der letzten Nachrichten aus dem Channel (nicht gepinnt),
+     * die dann an purgeMessages übergeben werden können.
+     *
+     * @param channel der MessageChannel
+     * @param amount Anzahl der zu sammelnden Nachrichten
+     * @return Liste der Nachrichten (max. amount + 1)
+     */
     public List<Message> get(MessageChannel channel, int amount) {
 
         List<Message> messages = new ArrayList<>();

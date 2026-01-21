@@ -13,10 +13,14 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 
+/**
+ * Listener für Support-Warteraum: Wenn ein Nutzer in den definierten Support-VoiceChannel
+ * eintritt, wird eine Benachrichtigung in einem konfigurierten Textchannel gepostet
+ * inklusive einem "Annehmen"-Button, der das Support-Team informieren kann.
+ */
 public class SupportListener extends ListenerAdapter {
 
     String channelid = "655373012131905550";
-    String textid = "773841319805452318";
 
     private static final Logger logger = LoggerFactory.getLogger(SupportListener.class);
 
@@ -40,6 +44,8 @@ public class SupportListener extends ListenerAdapter {
                     System.err.println("Notify Channel nicht gefunden!");
                     return;
                 }
+
+                if (e.getMember() == null) return;
 
                 String userID = e.getMember().getId();
                 EmbedBuilder eb = new EmbedBuilder();
@@ -66,10 +72,3 @@ public class SupportListener extends ListenerAdapter {
 
 
 }
-
-
-
-
-
-
-

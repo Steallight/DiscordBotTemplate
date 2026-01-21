@@ -1,8 +1,0 @@
-de/steallight/testbot/listener/GuildMessageReceivedListener.java
- de.steallight.testbot.listener.GuildMessageReceivedListener
-de/steallight/testbot/main/TestBot.java
- de.steallight.testbot.main.TestBot
-de/steallight/testbot/main/Bot.java
- de.steallight.testbot.main.Bot
-de/steallight/testbot/commands/Help.java
- de.steallight.testbot.commands.Help

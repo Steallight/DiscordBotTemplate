@@ -7,9 +7,15 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.awt.*;
 
+/**
+ * Gibt Links zu Social-Media-Kanälen des Entwicklers aus.
+ * Verwendung: !socials
+ */
 public class socials extends ListenerAdapter {
 
+    /** Basis-URL für Instagram */
     String instagram = "https://instagram.com/";
+    /** Basis-URL für Twitch */
     String twitchURL = "https://twitch.tv/";
 
     @Override
