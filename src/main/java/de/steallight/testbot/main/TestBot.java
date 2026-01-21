@@ -1,5 +1,8 @@
 package de.steallight.testbot.main;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.security.auth.login.LoginException;
 
 /**
@@ -9,6 +12,7 @@ import javax.security.auth.login.LoginException;
  */
 public class TestBot {
 
+    private static final Logger logger = LoggerFactory.getLogger(TestBot.class);
 
     /**
      * Main-Methode zum Starten der Anwendung.
@@ -20,7 +24,8 @@ public class TestBot {
             // Bot-Instanz erstellen und starten (Konstruktor registriert selbstständig Listener)
             new Bot();
         } catch (final LoginException | InterruptedException e) {
-            e.printStackTrace();
+            logger.error("Fehler beim Starten des Bots", e);
+            Thread.currentThread().interrupt();
         }
     }
 

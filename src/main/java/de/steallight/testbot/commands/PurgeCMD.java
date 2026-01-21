@@ -4,6 +4,8 @@ import de.steallight.testbot.main.Bot;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Löscht den Inhalt eines Channels, indem eine Kopie erstellt und die Original-Channe
@@ -12,6 +14,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
  */
 public class PurgeCMD extends ListenerAdapter {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PurgeCMD.class);
 
     /**
      * Führt das Purge-Verhalten aus, wenn ein berechtigter Nutzer den Befehl sendet.
@@ -21,12 +24,14 @@ public class PurgeCMD extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent e) {
         if (e.getMessage().getContentRaw().equals(Bot.PREFIX + "purge")) {
-            if (e.getMember().hasPermission(Permission.MANAGE_CHANNEL)) {
+            if (e.getMember() != null && e.getMember().hasPermission(Permission.MANAGE_CHANNEL)) {
                 try {
                     Integer position = e.getChannel().asTextChannel().getPosition();
                     e.getChannel().asTextChannel().createCopy().setPosition(position).queue();
                     e.getChannel().delete().queue();
-                }catch (NullPointerException ex){ex.printStackTrace();}
+                }catch (final Exception ex){
+                    LOGGER.error("Fehler beim Purge-Befehl", ex);
+                }
             }
         }
     }

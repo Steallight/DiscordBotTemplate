@@ -22,7 +22,13 @@ public class Hi extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent e) {
         if (e.getMessage().getContentRaw().equals(Bot.PREFIX+"hi")){
-           e.getChannel().sendMessage("Hi " +e.getMember().getAsMention() + " ^^").queue(message -> message.delete().queueAfter(3,TimeUnit.SECONDS));
+            final String mention;
+            if (e.getMember() != null) {
+                mention = e.getMember().getAsMention();
+            } else {
+                mention = e.getAuthor().getAsMention();
+            }
+           e.getChannel().sendMessage("Hi " + mention + " ^^").queue(message -> message.delete().queueAfter(3,TimeUnit.SECONDS));
         }
     }
 

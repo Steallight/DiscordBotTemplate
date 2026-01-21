@@ -15,6 +15,8 @@ import java.util.TimerTask;
 public class ActivityManager {
     /** Referenz auf den laufenden Switcher-Thread (als Runnable verwaltet). */
     private Runnable switcherThread;
+    // Referenz auf den Timer damit wir ihn später abbrechen können
+    private Timer timer;
 
     /**
      * Standard-Konstruktor. Frührere Implementierungen hielten eine Referenz auf
@@ -31,9 +33,10 @@ public class ActivityManager {
      */
     public void loadPresence() {
         ThreadHandler.startExecute(this.switcherThread = () -> {
-            final Timer timer = new Timer();
+            // Timer als Daemon starten, Referenz im Feld speichern
+            this.timer = new Timer(true);
 
-            timer.scheduleAtFixedRate(new TimerTask() {
+            this.timer.scheduleAtFixedRate(new TimerTask() {
                 int currentRoutinePosition = 0;
 
                 @Override
@@ -67,6 +70,15 @@ public class ActivityManager {
      * aus dem ThreadHandler entfernt wird.
      */
     public void stopPresence() {
-        ThreadHandler.removeExecute(this.switcherThread);
+        // Entferne den Hintergrund-Task und brich den Timer sauber ab
+        if (this.switcherThread != null) {
+            ThreadHandler.removeExecute(this.switcherThread);
+            this.switcherThread = null;
+        }
+        if (this.timer != null) {
+            this.timer.cancel();
+            this.timer.purge();
+            this.timer = null;
+        }
     }
 }

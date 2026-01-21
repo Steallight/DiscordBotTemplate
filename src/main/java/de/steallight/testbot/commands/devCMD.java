@@ -13,8 +13,6 @@ import java.awt.*;
  */
 public class devCMD extends ListenerAdapter {
 
-
-
     /**
      * Sendet ein Embed mit dem Entwickler-Hinweis in den aktuellen Channel.
      *
@@ -22,13 +20,16 @@ public class devCMD extends ListenerAdapter {
      */
     @Override
     public void onMessageReceived(MessageReceivedEvent e) {
-        // Vergleiche den Nachrichtentext (nicht das Message-Objekt) mit dem Befehl
         if (e.getMessage().getContentRaw().equals(Bot.PREFIX + "dev")) {
             EmbedBuilder eb = new EmbedBuilder();
 
             String mention = "<unknown>";
-            if (e.getGuild() != null && e.getGuild().getMemberById("438200912599580675") != null) {
-                mention = e.getGuild().getMemberById("438200912599580675").getAsMention();
+            if (e.isFromGuild()) {
+                // Hole das Member-Objekt einmal und prüfe es sicher
+                final var member = e.getGuild().getMemberById("438200912599580675");
+                if (member != null) {
+                    mention = member.getAsMention();
+                }
             }
 
             eb

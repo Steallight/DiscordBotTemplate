@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Befehl zum Entfernen einer Anzahl von Nachrichten aus dem aktuellen Channel.
  * Verwendung: !clear <Anzahl>
@@ -19,6 +22,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ClearCommand extends ListenerAdapter {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClearCommand.class);
 
     /**
      * Verarbeitet den Befehl, prüft Rechte und Anzahl-Argument und entfernt
@@ -42,7 +46,8 @@ public class ClearCommand extends ListenerAdapter {
                             .setColor(Color.blue);
                     e.getChannel().sendMessageEmbeds(eb.build()).queue(a -> a.delete().queueAfter(3, TimeUnit.SECONDS));
                 } catch (NumberFormatException ex) {
-                    ex.printStackTrace();
+                    LOGGER.warn("Ungültige Zahl für clear-Befehl: {}", args[1], ex);
+                    e.getChannel().sendMessage("Bitte eine gültige Zahl angeben.").queue(message -> message.delete().queueAfter(3, TimeUnit.SECONDS));
                 }
             }
         } else {

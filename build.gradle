@@ -25,7 +25,7 @@ dependencies {
 
 
 }
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
     // Debugging: Ausgabe des Java-Compilers aktivieren, um zu sehen, welche Datei das Problem verursacht
     options.compilerArgs += ['-Xlint:all', '-verbose']

@@ -35,9 +35,7 @@ public class Help extends ListenerAdapter {
                 eb.addField(Bot.PREFIX + "Avatar", "Zeigt dir deinen avatar vergrößert an.", false);
                 eb.setFooter("made by Steallight");
 
-                e.getMember().getUser().openPrivateChannel().queue(privateChannel1 -> {
-                    privateChannel1.sendMessageEmbeds(eb.build()).queue();
-                });
+                e.getMember().getUser().openPrivateChannel().queue(privateChannel1 -> privateChannel1.sendMessageEmbeds(eb.build()).queue());
             } else {
                 eb.setTitle("----Hilfe Menü----");
                 eb.setColor(Color.decode("#A900C3"));
@@ -55,9 +53,7 @@ public class Help extends ListenerAdapter {
                 eb.setFooter("made by Steallight");
 
 
-                e.getMember().getUser().openPrivateChannel().queue(privateChannel1 -> {
-                    privateChannel1.sendMessageEmbeds(eb.build()).queue();
-                });
+                e.getMember().getUser().openPrivateChannel().queue(privateChannel1 -> privateChannel1.sendMessageEmbeds(eb.build()).queue());
             }
         }
     }

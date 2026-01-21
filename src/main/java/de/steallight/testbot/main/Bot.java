@@ -24,7 +24,13 @@ public class Bot {
         INSTANCE = this;
 
 
-        jda = JDABuilder.create("",
+        // Token aus Umgebungsvariable lesen (sicherer als hardcodiert)
+        String token = System.getenv("BOT_TOKEN");
+        if (token == null || token.isBlank()) {
+            throw new IllegalStateException("Discord token is not set. Please provide BOT_TOKEN environment variable.");
+        }
+
+        jda = JDABuilder.create(token,
                 GatewayIntent.GUILD_MESSAGES,
                 GatewayIntent.DIRECT_MESSAGES,
                 GatewayIntent.GUILD_MODERATION,

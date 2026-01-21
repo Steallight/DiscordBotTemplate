@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.unions.AudioChannelUnion;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +25,7 @@ public class SupportListener extends ListenerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(SupportListener.class);
 
-    public void onGuildVoiceUpdate(GuildVoiceUpdateEvent e) {
+    public void onGuildVoiceUpdate(@NotNull GuildVoiceUpdateEvent e) {
         try {
             String supportWarteraumID = channelid;
             System.out.println("Support Warteraum ID: " + supportWarteraumID);
@@ -41,11 +42,9 @@ public class SupportListener extends ListenerAdapter {
                 TextChannel notifyChannel = e.getGuild().getTextChannelById("1279592048751804436");
 
                 if (notifyChannel == null) {
-                    System.err.println("Notify Channel nicht gefunden!");
+                    logger.error("Notify Channel nicht gefunden!");
                     return;
                 }
-
-                if (e.getMember() == null) return;
 
                 String userID = e.getMember().getId();
                 EmbedBuilder eb = new EmbedBuilder();
@@ -66,7 +65,7 @@ public class SupportListener extends ListenerAdapter {
 
             }
         } catch (Exception ex) {
-            logger.error("Fehler beim Laden der Config");
+            logger.error("Fehler beim Laden der Config", ex);
         }
     }
 

@@ -4,11 +4,10 @@ import de.steallight.testbot.main.Bot;
 import net.dv8tion.jda.api.Permission;
 
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
-import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -25,10 +24,13 @@ public class delchannel extends ListenerAdapter {
             if (e.getMember() == null) return;
 
             if (e.getMember().hasPermission(Permission.MANAGE_CHANNEL)) {
-                final List<GuildChannel> channels = e.getMessage().getMentions().getChannels();
+                final Optional<TextChannel> maybeTc = e.getMessage().getMentions().getChannels().stream()
+                        .filter(ch -> ch instanceof TextChannel)
+                        .map(ch -> (TextChannel) ch)
+                        .findFirst();
 
-                if (!channels.isEmpty()){
-                    final TextChannel tc = (TextChannel) channels.get(0);
+                if (maybeTc.isPresent()){
+                    final TextChannel tc = maybeTc.get();
 
                     if (e.getChannel() == tc) {
                         deleteChannel(e, tc.getId());
