@@ -1,7 +1,6 @@
 package de.steallight.testbot.main;
 
 
-
 import de.steallight.testbot.commands.*;
 import de.steallight.testbot.listener.*;
 import net.dv8tion.jda.api.JDA;
@@ -21,11 +20,7 @@ public class Bot {
     public static String PREFIX = "!";
     public static JDA jda;
     public static Bot INSTANCE;
-    public static ShardManager shardMan;
-public static TextChannel tc;
-
-
-
+    public static TextChannel tc;
 
 
     public Bot() throws LoginException, InterruptedException {
@@ -59,42 +54,11 @@ public static TextChannel tc;
         LiteSQL.connect();
         SQLManager.onCreate();
 
-
-
-
         /*
         builder.setActivity(Activity.playing("Work in Progress"));
         builder.setStatus(OnlineStatus.DO_NOT_DISTURB);
 
          */
-
-
-        shardMan.addEventListener(new GuildMessageReceivedListener(this.handler));
-        shardMan.addEventListener(new EmoteIdeaListener());
-        shardMan.addEventListener(new IdeenListener());
-        shardMan.addEventListener(new ReactionAddEvent());
-
-        shardMan.addEventListener(new ReactionListener());
-        shardMan.addEventListener(new JoinListener());
-
-        shardMan.addEventListener(new VoiceListener());
-
-        shardMan.addEventListener(new MemberCounter());
-        shardMan.addEventListener(new BoostListener());
-
-
-        //   shardMan.addEventListener(new SupportListener());
-
-        this.handler.registerCommand(new TicketMessage());
-        this.handler.registerCommand(new StaffNotify());
-
-        handler.registerCommand(new stream());
-        handler.registerCommand(new socials());
-
-
-
-        this.handler.registerCommand(new React());
-
 
         activityManager.loadPresence();
 
@@ -105,7 +69,7 @@ public static TextChannel tc;
     }
 
     //Für Events
-    public void addEvents(){
+    public void addEvents() {
         jda.addEventListener(new announceCMD());
         jda.addEventListener(new Avatar());
         jda.addEventListener(new ClearCommand());
@@ -114,10 +78,13 @@ public static TextChannel tc;
         jda.addEventListener(new Help());
         jda.addEventListener(new Hi());
         jda.addEventListener(new PurgeCMD());
+        jda.addEventListener(new socials());
+        jda.addEventListener(new SupportListener());
+        jda.addEventListener(new VoiceListener());
     }
 
     //Für Slash Commands
-    public void updateCommands(Guild server){
+    public void updateCommands(Guild server) {
         server.updateCommands()
                 .addCommands(
                         /*Commands.slash("set-ticket", "Setzte den TicketChannel")
@@ -128,11 +95,8 @@ public static TextChannel tc;
                 ).queue();
     }
 
-
-    public ShardManager getShardMan() {
-        return shardMan;
+    public static Bot getINSTANCE() {
+        return INSTANCE;
     }
-
-    public static Bot getINSTANCE(){return INSTANCE;}
 
 }
