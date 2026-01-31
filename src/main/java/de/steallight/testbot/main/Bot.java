@@ -2,6 +2,7 @@ package de.steallight.testbot.main;
 
 
 import de.steallight.testbot.commands.*;
+import de.steallight.testbot.listener.AvatarEmbedder;
 import de.steallight.testbot.listener.SupportListener;
 import de.steallight.testbot.listener.VoiceListener;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -93,7 +94,7 @@ public class Bot {
         jda.addEventListener(new SupportListener());
         jda.addEventListener(new VoiceListener());
         //Slash Commands
-
+        jda.addEventListener(new AvatarEmbedder());
     }
 
     //Für Slash Commands

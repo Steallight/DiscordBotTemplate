@@ -16,6 +16,7 @@ repositories {
 }
 
 dependencies {
+    implementation 'net.coobird:thumbnailator:0.4.21'
     implementation("net.dv8tion:JDA:6.3.0") {
         exclude module: 'opus-java'
     }
