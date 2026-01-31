@@ -1,5 +1,8 @@
-# PsychatrieBot
+# Discord Bot Template
 Ein MultifunktionsBot den ich für meinen eigenen Server geschrieben hatte
+
+![Static Badge](https://img.shields.io/badge/build-Stable-brightgreen?style=for-the-badge)
+
 
 Er beinhaltet:
   - smartes IdeenSystem
